@@ -2,7 +2,7 @@
 """
 这个文件是用户测试文件的运行起点，测试三方包里面的函数是否能自动使用用户自己的配置文件中设置的值。
 """
-
+import nb_log
 
 from nb_config.import_user_config import UserConfigAutoImporter
 

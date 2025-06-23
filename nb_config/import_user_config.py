@@ -60,16 +60,15 @@ class UserConfigAutoImporter:
             print(f'''import {self.user_config_module_path} 成功 ,使用 "{m.__file__}:1"  作为了配置文件''')
             dest_m = importlib.import_module(self.default_config_module_path)
             # importlib.reload(dest_m)
-            if self.is_show_final_config:
-                 for name in dir(dest_m):
-                    config_cls = getattr(dest_m, name)
-                    # 检查是否为类，且是 DataClassBase 的子类（但不是 DataClassBase 本身）
-                    if (inspect.isclass(config_cls) and 
-                        issubclass(config_cls, DataClassBase) and 
-                        config_cls is not DataClassBase):
+            for name in dir(dest_m):
+                config_cls = getattr(dest_m, name)
+                # 检查是否为类，且是 DataClassBase 的子类（但不是 DataClassBase 本身）
+                if (inspect.isclass(config_cls) and 
+                    issubclass(config_cls, DataClassBase) and 
+                    config_cls is not DataClassBase):
                         getattr(dest_m,name).update_cls_attribute(**getattr(m,name)().get_dict())
                         if self.is_show_final_config:
-                            print(f'{name} 的最终融合配置: {config_cls().get_pwd_enc_json()}')
+                            print(f'{dest_m.__name__}.{name} 的最终融合配置: {config_cls().get_pwd_enc_json()}')
             
         except ModuleNotFoundError:
             self.auto_create_user_config_file()
