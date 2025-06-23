@@ -4,9 +4,9 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/nb-config.svg)](https://pypi.org/project/nb-config/)
 [![License](https://img.shields.io/github/license/ydf0509/nb_config.svg)](https://github.com/ydf0509/nb_config/blob/main/LICENSE)
 
-一个优雅的Python配置覆盖系统，让用户可以透明地覆盖第三方库的配置，无需修改第三方库的任何代码。
+一个优雅的Python配置覆盖系统，让用户可以透明地覆盖第三方库的配置，无需修改第三方库的任何代码。万能通用覆盖配置包。
 
-适合写三方库，但用户需要自定义覆盖三方库的配置。
+这个包适合写三方库，但用户需要自定义覆盖三方库中的配置。
 
 ## ✨ 特性
 
