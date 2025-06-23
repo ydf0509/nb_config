@@ -230,16 +230,7 @@ class DatabaseConfig:  # 必须使用相同的类名
     pass
 ```
 
-### 3. 避免循环引用
 
-```python
-# ❌ 错误：不要让配置类覆盖自己
-@nb_config_class('your_module.config')  # 指向自己的模块
-class Config:
-    pass
-
-# ✅ 正确：nb_config 会自动检测并跳过自引用
-```
 
 ## 🧪 测试
 
