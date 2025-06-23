@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 nb_config 发布脚本
 使用现代化的 build 工具发布到 PyPI

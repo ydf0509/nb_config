@@ -57,7 +57,7 @@ class UserConfigAutoImporter:
         try:
             m= importlib.import_module(self.user_config_module_path)
             importlib.reload(m) 
-            print(f'''import {self.user_config_module_path} 成功 使用 "{m.__file__}:1"  作为了配置文件''')
+            print(f'''import {self.user_config_module_path} 成功 ,使用 "{m.__file__}:1"  作为了配置文件''')
             dest_m = importlib.import_module(self.default_config_module_path)
             # importlib.reload(dest_m)
             if self.is_show_final_config:
