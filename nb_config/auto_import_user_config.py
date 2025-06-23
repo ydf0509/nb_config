@@ -1,6 +1,6 @@
 import importlib
 
-def import_user_config(module_path: str):
+def auto_import_user_config(module_path: str):
     """
     导入用户配置模块
     
@@ -25,6 +25,8 @@ def import_user_config(module_path: str):
 
 💡 建议解决方案:
 • 将配置文件放在项目根目录下（推荐）
+【实际你可以放在你电脑磁盘的任意文件夹下，只要这个文件夹你添加到了pythonpath，就能被python找到；
+但放在项目根目录下，是为了复用好处，即使你不用这个包，对任意项目，把当前项目的根目录添加到当前会话的临时环境变量的pythonpath也是有益无害】
 • 项目根目录通常会自动添加到 Python 路径中
 • 在 PyCharm 等 IDE 中，项目根目录会自动加入 Python 路径
 
