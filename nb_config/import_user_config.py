@@ -1,16 +1,26 @@
 import importlib
+import inspect
 import multiprocessing
 from pathlib import Path
 from shutil import copyfile
 import sys
 
+from nb_config.simple_data_class import DataClassBase
+
 def is_main_process():
     return multiprocessing.process.current_process().name == 'MainProcess'
 
 class UserConfigAutoImporter:
-    def __init__(self,user_config_module_path:str,default_config_module_path:str):
+    """
+    自动导入用户配置模块，如果用户配置模块不存在，则在 sys.path[1] 目录下自动创建一个用户配置模块。
+    这个类通常由 三方框架内部去使用，而不是由用户亲自使用。
+    """
+    def __init__(self,user_config_module_path:str,default_config_module_path:str,
+                 is_show_final_config:bool=True,
+                 ):
         self.user_config_module_path=user_config_module_path # 用户配置模块的python import 路径
         self.default_config_module_path=default_config_module_path # 默认配置文件的python import路径
+        self.is_show_final_config=is_show_final_config
         
     def auto_create_user_config_file(self):
         if '/lib/python' in sys.path[1] or r'\lib\python' in sys.path[1] or '.zip' in sys.path[1]:
@@ -25,7 +35,7 @@ class UserConfigAutoImporter:
                                
                                懂PYTHONPATH 的重要性和妙用见： https://github.com/ydf0509/pythonpathdemo
                                ''')
-        target_file_name = Path(sys.path[1]) / Path('{self.user_config_module_path}.py')
+        target_file_name = Path(sys.path[1]) / Path(f'{self.user_config_module_path}.py')
         source_file_name = importlib.import_module(self.default_config_module_path).__file__
         copyfile(source_file_name, target_file_name)
         print(f'在  {Path(sys.path[1])} 目录下自动生成了一个文件， 请刷新文件夹查看或修改 \n "{target_file_name}:1" 文件')
@@ -48,6 +58,16 @@ class UserConfigAutoImporter:
             m= importlib.import_module(self.user_config_module_path)
             importlib.reload(m) 
             print(f'''import {self.user_config_module_path} 成功 使用 "{m.__file__}:1"  作为了配置文件''')
-            return m
+            dest_m = importlib.import_module(self.default_config_module_path)
+            # importlib.reload(dest_m)
+            if self.is_show_final_config:
+                 for name in dir(dest_m):
+                    obj = getattr(dest_m, name)
+                    # 检查是否为类，且是 DataClassBase 的子类（但不是 DataClassBase 本身）
+                    if (inspect.isclass(obj) and 
+                        issubclass(obj, DataClassBase) and 
+                        obj is not DataClassBase):
+                        print(f'{name} 的配置: {obj().get_pwd_enc_json()}')
+            
         except ModuleNotFoundError:
             self.auto_create_user_config_file()
