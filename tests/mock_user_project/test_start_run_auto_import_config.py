@@ -6,9 +6,6 @@
 
 from nb_config.import_user_config import UserConfigAutoImporter
 
-
-
-
 UserConfigAutoImporter(user_config_module_path='config_user2',
                        default_config_module_path='tests.mock_sitepackage.config_default').auto_import_user_config()
 

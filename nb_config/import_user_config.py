@@ -62,12 +62,14 @@ class UserConfigAutoImporter:
             # importlib.reload(dest_m)
             if self.is_show_final_config:
                  for name in dir(dest_m):
-                    obj = getattr(dest_m, name)
+                    config_cls = getattr(dest_m, name)
                     # 检查是否为类，且是 DataClassBase 的子类（但不是 DataClassBase 本身）
-                    if (inspect.isclass(obj) and 
-                        issubclass(obj, DataClassBase) and 
-                        obj is not DataClassBase):
-                        print(f'{name} 的配置: {obj().get_pwd_enc_json()}')
+                    if (inspect.isclass(config_cls) and 
+                        issubclass(config_cls, DataClassBase) and 
+                        config_cls is not DataClassBase):
+                        getattr(dest_m,name).update_cls_attribute(**getattr(m,name)().get_dict())
+                        if self.is_show_final_config:
+                            print(f'{name} 的最终融合配置: {config_cls().get_pwd_enc_json()}')
             
         except ModuleNotFoundError:
             self.auto_create_user_config_file()

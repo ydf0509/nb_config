@@ -51,7 +51,7 @@ python -m twine upload dist/*
 
 ```bash
 pip install nb-config
-python -c "from nb_config import nb_config_class; print('✅ 安装成功')"
+python -c "from nb_config import DataClassBase; print('✅ 安装成功')"
 ```
 
 ## 版本发布清单

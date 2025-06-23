@@ -15,7 +15,7 @@ def dict_to_un_strict_json(dictx: dict, indent=4):
         else:
             dict_new[k] = str(v)
     return json.dumps(dict_new, ensure_ascii=False, indent=indent)
-
+    
 class DataClassBase:
     """
     使用类实现的 简单数据类。
@@ -58,7 +58,7 @@ class DataClassBase:
                 if StrHelper(k).judge_contains_str_list(['pwd', 'pass_word', 'password', 'passwd', 'pass']):
                     v_enc = PwdEnc.enc_pwd(v_enc)
                 dict_new[k] = v_enc
-        return json.dumps(dict_new, ensure_ascii=False, indent=indent)
+        return dict_to_un_strict_json(dict_new,  indent=indent)
 
     @classmethod
     def update_cls_attribute(cls,**kwargs):
