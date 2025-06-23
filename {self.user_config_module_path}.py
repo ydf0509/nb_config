@@ -13,7 +13,7 @@ from nb_config import nb_config_class
 1. 验证自引用安全性：确保自己覆盖自己不会因循环引用而报错
 2. 用户便利性：用户可以直接复制此文件作为配置模板，无需手动添加装饰器
 '''
-@nb_config_class('tests.mock_sitepackage.config_defualt') 
+@nb_config_class('tests.mock_sitepackage.config_default') 
 class ConfigKLS1:
     config_a = '三方包默认的a'
     config_b = '三方包默认的b'

@@ -1,12 +1,34 @@
 import importlib
+import multiprocessing
+from pathlib import Path
+from shutil import copyfile
+import sys
 
 def is_main_process():
     return multiprocessing.process.current_process().name == 'MainProcess'
 
 class UserConfigAutoImporter:
-    def __init__(self,user_config_module_path:str,default_config_module_path_file:str):
+    def __init__(self,user_config_module_path:str,default_config_module_path:str):
         self.user_config_module_path=user_config_module_path # 用户配置模块的python import 路径
-        self.default_config_module_path_file=default_config_module_path_file # 默认配置文件的文件夹路径
+        self.default_config_module_path=default_config_module_path # 默认配置文件的python import路径
+        
+    def auto_create_user_config_file(self):
+        if '/lib/python' in sys.path[1] or r'\lib\python' in sys.path[1] or '.zip' in sys.path[1]:
+            raise EnvironmentError(f'''如果是cmd 或者shell启动而不是pycharm 这种ide启动脚本，请先在会话窗口设置临时PYTHONPATH为你的项目路径，
+
+                               windwos cmd 使用              set PYTHONNPATH=你的当前python项目根目录,
+                               windows powershell 使用       $env:PYTHONPATH=你的当前python项目根目录,
+                               linux 使用                    export PYTHONPATH=你的当前你python项目根目录,
+                                   
+                               PYTHONPATH 作用是python的基本常识，请ai问一下，不懂这个就太low了。
+                               需要在会话窗口命令行设置临时的环境变量，而不是修改linux配置文件的方式设置永久环境变量，每个python项目的PYTHONPATH都要不一样，不要在配置文件写死
+                               
+                               懂PYTHONPATH 的重要性和妙用见： https://github.com/ydf0509/pythonpathdemo
+                               ''')
+        target_file_name = Path(sys.path[1]) / Path('{self.user_config_module_path}.py')
+        source_file_name = importlib.import_module(self.default_config_module_path).__file__
+        copyfile(source_file_name, target_file_name)
+        print(f'在  {Path(sys.path[1])} 目录下自动生成了一个文件， 请刷新文件夹查看或修改 \n "{target_file_name}:1" 文件')
         
 
     def auto_import_user_config(self):
@@ -25,43 +47,7 @@ class UserConfigAutoImporter:
         try:
             m= importlib.import_module(self.user_config_module_path)
             importlib.reload(m) 
-            print(f'''import module_path sucess ，use "{m.__file__}:1"  as config file''')
+            print(f'''import {self.user_config_module_path} 成功 使用 "{m.__file__}:1"  作为了配置文件''')
             return m
         except ModuleNotFoundError:
-            raise ImportError(f'''
-❌ 无法导入用户配置模块: {self.user_config_module_path}
-
-🔍 请检查以下几点:
-1. 配置文件是否存在
-2. 配置文件是否在 Python 路径中
-
-💡 建议解决方案:
-• 将配置文件放在项目根目录下（推荐）
-【实际你可以放在你电脑磁盘的任意文件夹下，只要这个文件夹你添加到了pythonpath，就能被python找到；
-但放在项目根目录下，是为了复用好处，即使你不用这个包，对任意项目，把当前项目的根目录添加到当前会话的临时环境变量的pythonpath也是有益无害】
-• 项目根目录通常会自动添加到 Python 路径中
-• 在 PyCharm 等 IDE 中，项目根目录会自动加入 Python 路径
-
-🚀 如果在终端运行，请先设置 PYTHONPATH:
-
-Linux/Mac:
-export PYTHONPATH=/path/to/your/project
-
-Windows CMD:
-set PYTHONPATH=C:\\path\\to\\your\\project
-
-Windows PowerShell:
-$env:PYTHONPATH = "C:\\path\\to\\your\\project"
-
-然后再运行你的 Python 脚本。
-
-pythonpath 基本知识过于薄弱的，需要看 https://github.com/ydf0509/pythonpathdemo 这个项目，说明懂pythonpath的重要性。
-                        '''
-                        )
-  
-    
-
-
-
-
-
+            self.auto_create_user_config_file()

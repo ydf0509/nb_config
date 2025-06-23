@@ -5,7 +5,7 @@
 """
 from nb_config import nb_config_class
 
-@nb_config_class('tests.mock_sitepackage.config_defualt')
+@nb_config_class('tests.mock_sitepackage.config_default')
 class ConfigKLS1:
     config_a = '用户自己的a' #用户的config_a覆盖三方包默认的config_a
     config_b = '用户自己的b' #用户的config_b覆盖三方包默认的config_b

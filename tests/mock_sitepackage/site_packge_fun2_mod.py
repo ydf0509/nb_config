@@ -2,7 +2,7 @@
 """
 这个文件是三方包的函数文件，里面是使用三方包默认配置文件的配置模块，但能自动使用用户自己的配置文件中设置的值。
 """
-from  tests.mock_sitepackage.config_defualt import ConfigKLS1
+from  tests.mock_sitepackage.config_default import ConfigKLS1
 
 def site_packge_fun2():
     """

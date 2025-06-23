@@ -4,8 +4,13 @@
 """
 
 
+from nb_config.import_user_config import UserConfigAutoImporter
 
-import tests.mock_user_project.config_user  # 这个是关键，用户只要导入了自己的模块，三方包里面自动使用用户自己的配置文件中设置的值。
+
+
+
+UserConfigAutoImporter(user_config_module_path='config_user2',
+                       default_config_module_path='tests.mock_sitepackage.config_default').auto_import_user_config()
 
 import tests.mock_sitepackage.site_packge_fun1_mod
 from tests.mock_sitepackage.site_packge_fun2_mod import site_packge_fun2
