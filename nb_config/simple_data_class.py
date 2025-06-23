@@ -21,6 +21,7 @@ class DataClassBase:
     使用类实现的 简单数据类。
     也可以使用装饰器来实现数据类
     """
+    has_merged_config = False
 
     def __new__(cls, **kwargs):
         self = super().__new__(cls)
@@ -70,6 +71,11 @@ class DataClassBase:
         for k, v in kwargs.items():
             setattr(self, k, v)
         return self
+    
+    @classmethod
+    def check_has_merged_config(cls):
+        if cls.has_merged_config is False:
+            raise ValueError(f'{cls.__name__} 的配置没有被合并')
 
 
 if __name__ == '__main__':

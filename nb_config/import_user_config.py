@@ -66,9 +66,29 @@ class UserConfigAutoImporter:
                 if (inspect.isclass(config_cls) and 
                     issubclass(config_cls, DataClassBase) and 
                     config_cls is not DataClassBase):
-                        getattr(dest_m,name).update_cls_attribute(**getattr(m,name)().get_dict())
+                        dest_cls = getattr(dest_m,name)
+                        dest_cls.update_cls_attribute(**getattr(m,name)().get_dict())
+                        dest_cls.has_merged_config = True
                         if self.is_show_final_config:
                             print(f'{dest_m.__name__}.{name} 的最终融合配置: {config_cls().get_pwd_enc_json()}')
             
         except ModuleNotFoundError:
             self.auto_create_user_config_file()
+    
+   
+    def check_all_config_has_merged(self):
+        dest_m = importlib.import_module(self.default_config_module_path)
+        for name in dir(dest_m):
+            config_cls = getattr(dest_m, name)
+            if (inspect.isclass(config_cls) and 
+                issubclass(config_cls, DataClassBase) and 
+                config_cls is not DataClassBase):
+                if  config_cls.has_merged_config is False:
+                    raise ValueError(f'{dest_m.__name__}.{name} 的配置没有被合并')
+
+
+
+
+
+
+
