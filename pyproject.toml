@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nb-config"
+version = "1.0.0"
+description = "一个优雅的Python配置覆盖系统，让用户可以透明地覆盖第三方库的配置"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "ydf", email = "ydf0509@sohu.com"}
+]
+maintainers = [
+    {name = "ydf", email = "ydf0509@sohu.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
+keywords = ["config", "configuration", "override", "third-party", "library", "settings", "nb"]
+requires-python = ">=3.6"
+dependencies = [
+    "nb-log",
+]
+
+[project.urls]
+Homepage = "https://github.com/ydf0509/nb_config"
+Repository = "https://github.com/ydf0509/nb_config.git"
+Documentation = "https://github.com/ydf0509/nb_config/wiki"
+"Bug Tracker" = "https://github.com/ydf0509/nb_config/issues"
+Changelog = "https://github.com/ydf0509/nb_config/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+packages = ["nb_config"]
+
+[tool.setuptools.package-data]
+nb_config = ["*.py"] 
