@@ -83,31 +83,37 @@ some_function()  # 自动使用 your-production-db.com 而不是 localhost
 
 ### 实际应用场景
 
-#### 场景1：Celery 配置覆盖
+#### 场景1：第三方框架配置覆盖
 
-Celery 有200+个配置项，使用环境变量管理非常麻烦：
+假设某个第三方框架有很多配置项，传统方法需要环境变量或修改源码：
 
 ```python
-# your_project/celery_config.py
+# your_project/framework_config.py
 from nb_config import nb_config_class
 
-@nb_config_class('celery.app.defaults')
-class Celery:
-    broker_url = 'redis://your-redis:6379/0'
-    result_backend = 'redis://your-redis:6379/1'
-    task_serializer = 'json'
-    accept_content = ['json']
-    result_serializer = 'json'
-    timezone = 'Asia/Shanghai'
-    # 只需要配置你关心的选项，其余200+配置保持默认
+@nb_config_class('some_framework.settings')
+class Config:
+    # 数据库配置
+    database_host = 'your-production-db.com'
+    database_port = 5432
+    database_name = 'your_app_db'
+    
+    # 缓存配置
+    cache_backend = 'redis'
+    cache_url = 'redis://your-redis:6379/0'
+    
+    # 业务配置
+    max_connections = 100
+    timeout = 30
+    # 只需要配置你关心的选项，其余配置保持框架默认值
 ```
 
 ```python
-# your_project/tasks.py
-import your_project.celery_config  # 导入配置
-from celery import Celery
+# your_project/main.py
+import your_project.framework_config  # 导入配置
+from some_framework import create_app
 
-app = Celery('your_app')  # 自动使用你的配置
+app = create_app()  # 自动使用你的配置
 ```
 
 #### 场景2：数据库连接配置
@@ -173,21 +179,6 @@ class Config:
         database_url = 'sqlite:///dev.db'
 ```
 
-#### 3. 配置继承
-
-```python
-from nb_config import nb_config_class
-
-class BaseConfig:
-    timeout = 30
-    retry_count = 3
-
-@nb_config_class('third_party.config')
-class MyConfig(BaseConfig):
-    timeout = 60  # 覆盖基类配置
-    # retry_count 继承基类的值
-    custom_option = 'my_value'  # 新增配置
-```
 
 ## 🔧 API 参考
 
