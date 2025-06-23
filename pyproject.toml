@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nb-config"
-version = "1.1"
+version = "1.2"
 description = "一个优雅的Python配置覆盖系统，让用户可以透明地覆盖第三方库的配置"
 readme = "README.md"
 license = {text = "MIT"}
