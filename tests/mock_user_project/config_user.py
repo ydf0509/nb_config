@@ -6,7 +6,7 @@ from nb_config import DataClassBase
 
 
 # 继承第三方包的配置类，覆盖需要修改的配置项
-class ConfigKLS1(DefaultConfigKLS1):
+class ConfigKLS1(DataClassBase):
     config_a = 'tests.mock_user_project.config_user 的a'  # 用户的config_a覆盖三方包默认的config_a
     config_b = 'tests.mock_user_project.config_user 的b'  # 用户的config_b覆盖三方包默认的config_b
     # config_c = '用户自己的c'  # 可以不写，不写的话，就继承三方包默认的config_c

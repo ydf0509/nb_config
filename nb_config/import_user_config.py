@@ -35,10 +35,36 @@ class UserConfigAutoImporter:
                                
                                懂PYTHONPATH 的重要性和妙用见： https://github.com/ydf0509/pythonpathdemo
                                ''')
-        target_file_name = Path(sys.path[1]) / Path(f'{self.user_config_module_path}.py')
+        
+        # 解析模块路径，支持多级目录结构
+        project_root = Path(sys.path[1])
+        module_parts = self.user_config_module_path.split('.')
+        
+        # 构建目录路径和文件路径
+        if len(module_parts) > 1:
+            # 多级目录情况，如 configs.py_configs.my_config
+            dir_parts = module_parts[:-1]  # ['configs', 'py_configs']
+            file_name = module_parts[-1]   # 'my_config'
+            
+            # 创建目录结构
+            current_path = project_root
+            for dir_part in dir_parts:
+                current_path = current_path / dir_part
+                current_path.mkdir(exist_ok=True)
+                
+                # 确保每个目录都有 __init__.py 文件
+                init_file = current_path / '__init__.py'
+                if not init_file.exists():
+                    init_file.write_text('# Auto-generated __init__.py\n', encoding='utf-8')
+            
+            target_file_name = current_path / f'{file_name}.py'
+        else:
+            # 单级文件情况，如 config_user2
+            target_file_name = project_root / f'{self.user_config_module_path}.py'
+        
         source_file_name = importlib.import_module(self.default_config_module_path).__file__
         copyfile(source_file_name, target_file_name)
-        print(f'在  {Path(sys.path[1])} 目录下自动生成了一个文件， 请刷新文件夹查看或修改 \n "{target_file_name}:1" 文件')
+        print(f'在  {project_root} 目录下自动生成了一个文件， 请刷新文件夹查看或修改 \n "{target_file_name}:1" 文件')
         
 
     def auto_import_user_config(self):
@@ -55,28 +81,32 @@ class UserConfigAutoImporter:
             ImportError: 当模块无法找到时，提供详细的解决方案
         """
         try:
-            m= importlib.import_module(self.user_config_module_path)
-            importlib.reload(m) 
-            print(f'''import {self.user_config_module_path} 成功 ,使用 "{m.__file__}:1"  作为了配置文件''')
-            dest_m = importlib.import_module(self.default_config_module_path)
-            # importlib.reload(dest_m)
-            for name in dir(dest_m):
-                config_cls = getattr(dest_m, name)
-                # 检查是否为类，且是 DataClassBase 的子类（但不是 DataClassBase 本身）
-                if (inspect.isclass(config_cls) and 
-                    issubclass(config_cls, DataClassBase) and 
-                    config_cls is not DataClassBase):
-                        dest_cls = getattr(dest_m,name)
-                        dest_cls.update_cls_attribute(**getattr(m,name)().get_dict())
-                        dest_cls.has_merged_config = True
-                        if self.is_show_final_config:
-                            print(f'{dest_m.__name__}.{name} 的最终融合配置: {config_cls().get_pwd_enc_json()}')
-            
+            self.overwrite_default_config_with_user_config()
         except ModuleNotFoundError:
             self.auto_create_user_config_file()
-    
+            self.overwrite_default_config_with_user_config()
+            
+    def overwrite_default_config_with_user_config(self):
+        m= importlib.import_module(self.user_config_module_path)
+        importlib.reload(m) 
+        print(f'''import {self.user_config_module_path} 成功 ,使用 "{m.__file__}:1"  作为了配置文件''')
+        dest_m = importlib.import_module(self.default_config_module_path)
+        # importlib.reload(dest_m)
+        for name in dir(dest_m):
+            config_cls = getattr(dest_m, name)
+            # 检查是否为类，且是 DataClassBase 的子类（但不是 DataClassBase 本身）
+            if (inspect.isclass(config_cls) and 
+                issubclass(config_cls, DataClassBase) and 
+                config_cls is not DataClassBase):
+                    dest_cls = getattr(dest_m,name)
+                    dest_cls.update_cls_attribute(**getattr(m,name)().get_dict())
+                    dest_cls.has_merged_config = True
+                    if self.is_show_final_config:
+                        if is_main_process():
+                            print(f'{dest_m.__name__}.{name} 的最终融合配置: {config_cls().get_pwd_enc_json()}')
+        # importlib.reload(dest_m) # 这个不能加，不然又恢复了默认值
    
-    def check_all_config_has_merged(self):
+    def check_all_default_config_has_merged(self):
         dest_m = importlib.import_module(self.default_config_module_path)
         for name in dir(dest_m):
             config_cls = getattr(dest_m, name)

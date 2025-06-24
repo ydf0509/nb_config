@@ -6,11 +6,11 @@ import nb_log
 
 from nb_config.import_user_config import UserConfigAutoImporter
 
-UserConfigAutoImporter(user_config_module_path='config_user2',
+UserConfigAutoImporter(user_config_module_path='myconfigs.pyconfigs.config_user5',
                        default_config_module_path='tests.mock_sitepackage.config_default').auto_import_user_config()
 
 # UserConfigAutoImporter(user_config_module_path='',
-#                        default_config_module_path='tests.mock_sitepackage.config_default').check_all_config_has_merged()
+#                        default_config_module_path='tests.mock_sitepackage.config_default').check_all_default_config_has_merged()
 
 import tests.mock_sitepackage.site_packge_fun1_mod
 from tests.mock_sitepackage.site_packge_fun2_mod import site_packge_fun2

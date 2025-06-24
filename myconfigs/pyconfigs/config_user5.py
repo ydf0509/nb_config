@@ -6,12 +6,11 @@ from nb_config import DataClassBase
 
 # 三方包的默认配置文件
 class ConfigKLS1(DataClassBase):
-    config_a = '三方包默认的a'
-    config_b = '三方包默认的b'
-    config_c = '三方包默认的c'
+    config_a = '用户自己的 config_user5 的 config_a'
+  
 
 
 class ConfigKLS222(DataClassBase):
-    config_f = '三方包默认的f'
-    config_g = '三方包默认的g'
-    config_h = '三方包默认的h'
+    config_f = '用户自己的 config_user5 的 config_f'
+    config_g = '用户自己的 config_user5 的 config_g'
+    config_h = '用户自己的 config_user5 的 config_h'
