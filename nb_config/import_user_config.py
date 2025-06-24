@@ -16,10 +16,12 @@ class UserConfigAutoImporter:
     这个类通常由 三方框架内部去使用，而不是由用户亲自使用。
     """
     def __init__(self,user_config_module_path:str,default_config_module_path:str,
+                 is_auto_create_user_config_file:bool=True,
                  is_show_final_config:bool=True,
                  ):
         self.user_config_module_path=user_config_module_path # 用户配置模块的python import 路径
         self.default_config_module_path=default_config_module_path # 默认配置文件的python import路径
+        self.is_auto_create_user_config_file=is_auto_create_user_config_file
         self.is_show_final_config=is_show_final_config
         
     def auto_create_user_config_file(self):
@@ -34,6 +36,9 @@ class UserConfigAutoImporter:
                                需要在会话窗口命令行设置临时的环境变量，而不是修改linux配置文件的方式设置永久环境变量，每个python项目的PYTHONPATH都要不一样，不要在配置文件写死
                                
                                懂PYTHONPATH 的重要性和妙用见： https://github.com/ydf0509/pythonpathdemo
+                               ''')
+        if self.is_auto_create_user_config_file is False:
+            raise EnvironmentError(f'''如果用户配置模块不能被自动导入，又不希望自动创建，请先在会话窗口设置临时PYTHONPATH为你的配置文件所在的文件夹，
                                ''')
         
         # 解析模块路径，支持多级目录结构
@@ -99,7 +104,7 @@ class UserConfigAutoImporter:
                 issubclass(config_cls, DataClassBase) and 
                 config_cls is not DataClassBase):
                     dest_cls = getattr(dest_m,name)
-                    dest_cls.update_cls_attribute(**getattr(m,name)().get_dict())
+                    dest_cls.update_cls_attribute(**getattr(m,name)().get_dict()) # 将用户配置的值更新到默认配置中
                     dest_cls.has_merged_config = True
                     if self.is_show_final_config:
                         if is_main_process():

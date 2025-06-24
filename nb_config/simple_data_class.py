@@ -26,6 +26,7 @@ class DataClassBase:
     def __new__(cls, **kwargs):
         self = super().__new__(cls)
         self.__dict__ = copy.copy({k: v for k, v in cls.__dict__.items() if not k.startswith('__')})
+        self.__dict__.pop('has_merged_config',None)
         return self
 
     def __init__(self, **kwargs):
